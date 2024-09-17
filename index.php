@@ -7,6 +7,13 @@
 </head>
 
 <body>
+    <?php if (5 > 1):
+        echo "cc" ?> <?php endif; ?>
+
+
+
+
+
     <h1>Ma page web</h1>
     <p>
         Aujourd'hui nous sommes le
