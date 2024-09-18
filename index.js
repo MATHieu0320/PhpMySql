@@ -31,6 +31,10 @@ const usersObject = [
     age: "25",
   }),
 ];
-for (let i = 0; i < 10; i++) {
+for (let i = 0; i < 1; i++) {
   console.log(usersObject[i].age);
+}
+let tab = [1, 2, 454, 8, 5];
+for (const p of tab) {
+  console.log(p);
 }

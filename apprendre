@@ -5,3 +5,4 @@
     <h1>Liste des recettes à base de poulet</h1>
 
 <?php endif; ?><!-- Ni le ";" après le endif -->
+<?php foreach ($recipe as $property => $propertyValue) ?>
