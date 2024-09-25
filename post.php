@@ -19,6 +19,15 @@
     } else {
         echo "Email pris en compte";
     }
+    if (isset($_FILES['screenshot']) && $_FILES['screenshot']['error'] == 0) {
+        echo "cbon";
+        if ($_FILES['screenshot']['size'] > 1000000) {
+            echo "cbon";
+            return;
+        }
+    } else {
+        echo "non";
+    }
     ?>
 
 
