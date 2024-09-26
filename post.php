@@ -10,7 +10,11 @@
 <body>
 
     <?php $postDate = $_POST ?>
-    <?php if (
+
+    <?php
+    $fileInfo = pathinfo($_FILES['screenshot']['name']);
+    $extension = $fileInfo['extension'];
+    if (
         !isset($_POST["email"]) ||
         !filter_var($_POST["email"], FILTER_VALIDATE_EMAIL)
 
@@ -23,15 +27,22 @@
         echo "cbon";
         if ($_FILES['screenshot']['size'] > 1000000) {
             echo "cbon";
-            return;
+
+            if ($fileInfo['extension'] == "png") {
+                echo "cbon";
+                return;
+            }
         }
     } else {
         echo "non";
     }
+
+
     ?>
 
 
     <h1><?php echo htmlspecialchars($postDate["email"]) ?></h1>
+    <!-- htmlspecialchars empeche l affichage du script si quequ'un en rajoute -->
 </body>
 
 </html>
