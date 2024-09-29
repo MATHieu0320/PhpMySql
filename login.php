@@ -64,4 +64,87 @@ if (
 
 </body>
 
+</html><!DOCTYPE html>
+
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+</body>
+
+
+<?php $DataPost = $_POST ?>
+
+<?php
+<h1>LE FORMULAIRE login email mdp</h1>
+<?php $MailBon = false; ?>
+<?php if ($MailBon == false): ?>
+    <form action="login.php" method="POST" enctype="multipart/form-data">
+        <div id="email">
+            <label for="emaillogin">emaillogin</label>
+            <input type="email" id="emaillogin" name="nameEmail">
+        </div>
+        <div id="password">
+            <label for="passwordlogin">passwordlogin</label>
+            <input type="password" id="passwordlogin" name="namePassword">
+        </div>
+        <button type="submit">Envoyer</button>
+    </form>
+
+<?php endif; ?>
+
+<!-- fin login email mdp -->
+<?php $DataPost = $_POST ?>
+<?php $tableauClientValid = [
+    [
+        "Email" => "ordi@gmail.com",
+        "mdp" => "ordi"
+    ],
+    [
+        "Email" => "voiture@gmail.com",
+        "mdp" => "voiture"
+    ],
+    [
+        "Email" => "riche@gmail.com",
+        "mdp" => "riche"
+    ],
+
+] ?>
+
+<?php
+$found = true;
+foreach ($tableauClientValid as $key) {
+
+    if ($key["Email"] == $DataPost["nameEmail"] && $key["mdp"] == $DataPost["namePassword"]) {
+        // echo "L'email est valid";
+        if (
+            !isset($DataPost["nameEmail"])
+            || !filter_var($DataPost["nameEmail"]
+                || empty($DataPost['nameEmail'])
+                || trim($DataPost['nameEmail']) === '')
+
+
+        ) {
+            echo "Votre email est bien dans la base de donnee mais ne convient pas comme email valid";
+        } else {
+            echo "Bonjour " . $DataPost["nameEmail"] . "et bienvenue sur le site !";
+            echo $MailBon;
+            $found = true;
+            require_once(__DIR__ . '/recette.php');
+        }
+
+    }
+    if (!$found) {
+        echo "impaussible";
+    }
+}
+
+?>
+
+
 </html>
