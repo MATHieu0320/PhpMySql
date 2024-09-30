@@ -1,3 +1,4 @@
+<?php session_start() ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -8,143 +9,90 @@
 </head>
 <!-- login email mdp -->
 <h1>LE FORMULAIRE login email mdp</h1>
-<form action="login.php" method="POST" enctype="multipart/form-data">
-    <div id="email">
-        <label for="emaillogin">emaillogin</label>
-        <input type="email" id="emaillogin" name="nameEmail">
-    </div>
-    <div id="password">
-        <label for="passwordlogin">passwordlogin</label>
-        <input type="password" id="passwordlogin" name="namePassword">
-    </div>
-    <button type="submit">Envoyer</button>
-</form>
-<!-- fin login email mdp -->
-<?php $DataPost = $_POST ?>
-<?php $tableauClientValid = [
-    [
-        "Email" => "mojk@gmail.com",
-        "mdp" => "ordi"
-    ],
-    [
-        "Email" => "mojak@gmail.com",
-        "mdp" => "voiture"
-    ],
-    [
-        "Email" => "mojkc@gmail.com",
-        "mdp" => "riche"
-    ],
 
-] ?>
-<?php $valid = false ?>
-<?php
+<h2><a href=<?php session_destroy() ?>>Deconnexion</a></h2>
 
-if (
-    !isset($DataPost["nameEmail"])
-    || !filter_var($DataPost["nameEmail"]
-        || empty($DataPost['nameEmail'])
-        || trim($DataPost['nameEmail']) === '')
-
-
-) {
-    echo "ça marche pas";
-} else {
-    echo "Bonjour " . $DataPost["nameEmail"] . "et bienvenue sur le site !";
-    $valid = true;
-}
-
-?>
-
-
-<?php if ($valid = true): ?>
-    <?php require_once(__DIR__ . '/recette.php'); ?>
-<?php endif ?>
 
 <body>
+    <?php
+    $tableauClientValid = [
+        [
+            "email" => "ordi@gmail.com",
+            "password" => "ordi"
+        ],
+        [
+            "email" => "voiture@gmail.com",
+            "password" => "voiture"
+        ],
+        [
+            "email" => "riche@gmail.com",
+            "password" => "riche"
+        ],
 
-</body>
+    ];
+    /**
+     * On ne traite pas les super globales provenant de l'utilisateur directement,
+     * ces données doivent être testées et vérifiées.
+     */
 
-</html><!DOCTYPE html>
-
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-
-<body>
-
-</body>
-
-
-<?php $DataPost = $_POST ?>
-
-<?php
-<h1>LE FORMULAIRE login email mdp</h1>
-<?php $MailBon = false; ?>
-<?php if ($MailBon == false): ?>
-    <form action="login.php" method="POST" enctype="multipart/form-data">
-        <div id="email">
-            <label for="emaillogin">emaillogin</label>
-            <input type="email" id="emaillogin" name="nameEmail">
-        </div>
-        <div id="password">
-            <label for="passwordlogin">passwordlogin</label>
-            <input type="password" id="passwordlogin" name="namePassword">
-        </div>
-        <button type="submit">Envoyer</button>
-    </form>
-
-<?php endif; ?>
-
-<!-- fin login email mdp -->
-<?php $DataPost = $_POST ?>
-<?php $tableauClientValid = [
-    [
-        "Email" => "ordi@gmail.com",
-        "mdp" => "ordi"
-    ],
-    [
-        "Email" => "voiture@gmail.com",
-        "mdp" => "voiture"
-    ],
-    [
-        "Email" => "riche@gmail.com",
-        "mdp" => "riche"
-    ],
-
-] ?>
-
-<?php
-$found = true;
-foreach ($tableauClientValid as $key) {
-
-    if ($key["Email"] == $DataPost["nameEmail"] && $key["mdp"] == $DataPost["namePassword"]) {
-        // echo "L'email est valid";
-        if (
-            !isset($DataPost["nameEmail"])
-            || !filter_var($DataPost["nameEmail"]
-                || empty($DataPost['nameEmail'])
-                || trim($DataPost['nameEmail']) === '')
+    $postData = $_POST;
 
 
-        ) {
-            echo "Votre email est bien dans la base de donnee mais ne convient pas comme email valid";
+    // Validation du formulaire
+    if (isset($postData['email']) && isset($postData['password'])) {
+        if (!filter_var($postData['email'], FILTER_VALIDATE_EMAIL)) {
+            $errorMessage = 'Il faut un email valide pour soumettre le formulaire.';
         } else {
-            echo "Bonjour " . $DataPost["nameEmail"] . "et bienvenue sur le site !";
-            echo $MailBon;
-            $found = true;
-            require_once(__DIR__ . '/recette.php');
+            foreach ($tableauClientValid as $user) {
+                if (
+                    $user['email'] === $postData['email'] &&
+                    $user['password'] === $postData['password']
+                ) {
+                    $_SESSION["logged"] = $user["email"];
+                    $_SESSION["logged2"] = $user["mdp"];
+                }
+            }
+
+            if (!isset($_SESSION["logged"])) {
+                $errorMessage = sprintf(
+                    'Les informations envoyées ne permettent pas de vous identifier : (%s/%s)',
+                    $postData['email'],
+                    strip_tags($postData['password'])
+                );
+            }
         }
-
     }
-    if (!$found) {
-        echo "impaussible";
-    }
-}
+    ?>
 
-?>
-
+    <!--
+       Si utilisateur/trice est non identifié(e), on affiche le formulaire
+    -->
+    <?php if (!isset($_SESSION["logged"])): ?>
+        <form action="envoie.php" method="POST">
+            <!-- si message d'erreur on l'affiche -->
+            <?php if (isset($errorMessage)): ?>
+                <div class="alert alert-danger" role="alert">
+                    <?php echo $errorMessage; ?>
+                </div>
+            <?php endif; ?>
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" name="email" aria-describedby="email-help"
+                    placeholder="you@exemple.com">
+                <div id="email-help" class="form-text">L'email utilisé lors de la création de compte.</div>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Mot de passe</label>
+                <input type="password" class="form-control" id="password" name="password">
+            </div>
+            <button type="submit" class="btn btn-primary">Envoyer</button>
+        </form>
+        <!-- Si utilisateur/trice bien connectée on affiche un message de succès -->
+    <?php else: ?>
+        <div class="alert alert-success" role="alert">
+            Bonjour <?php echo $_SESSION["logged"]; ?> et bienvenue sur le site !
+        </div>
+    <?php endif; ?>
+</body>
 
 </html>
